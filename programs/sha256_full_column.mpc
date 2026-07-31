@@ -1,0 +1,75 @@
+# sha256_full_column.mpc
+#
+# Saca la COLUMNA COMPLETA del CRV (n_steps valores) en una unica
+# ejecucion de MPC.
+#
+# Cada trustee aporta n_steps valores secretos SK_j^i (uno por
+# posicion de la columna). Definimos S_i = XOR de los SK_j^i de todos
+# los trustees en la posicion i.
+#
+# Formula (para i >= 1), verificada algebraicamente:
+#   CRV_i = H(CRV_{i-1} XOR S_{i-1}) XOR S_i
+# porque CRV_{i-1} XOR S_{i-1} reconstruye T_{i-1} (el valor real que
+# tendria el "virtual-dealer"), sin revelarlo en ningun momento
+# pues se hashea mientras sigue siendo secreto y se vuelve a cegar con
+# S_i antes de revelar CRV_i.
+#
+# Caso base (i=0, sin hash):
+#   CRV_0 = S_0  (revelado directamente)
+#
+# Uso: ./compile.py sha256_full_column <n_steps> <n_parties>
+
+from circuit import sha256
+
+n_steps = int(program.args[1])
+n_parties = int(program.args[2])
+n_bytes = 32  # 256 bits
+
+T = sbits.get_type(n_bytes * 8)
+
+def to_message_bits(value):
+    """Convierte un valor de 256 bits en los 'bits de mensaje' que
+    espera sha256() como entrada (regla confirmada empiricamente en
+    un experimento anterior)."""
+    all_bits = value.bit_decompose(n_bytes * 8)
+    message_bits = []
+    for i in range(n_bytes):
+        chunk_index = n_bytes - 1 - i
+        chunk = all_bits[8 * chunk_index : 8 * chunk_index + 8]
+        message_bits += list(reversed(chunk))
+    return sbitvec.from_vec(message_bits)
+
+
+# Cada party aporta n_steps valores secretos, uno por posicion de la columna
+shares = [[T.get_input_from(p) for _ in range(n_steps)] for p in range(n_parties)]
+
+def S(i):
+    """XOR de los shares de los n_parties trustees en la posicion i."""
+    result = shares[0][i]
+    for p in range(1, n_parties):
+        result = result ^ shares[p][i]
+    return result
+
+
+# --- Caso base: CRV_0 = S_0, revelado directamente (sin hash) ---
+S_prev = S(0)
+crv_prev = S_prev.reveal()
+crv_prev.print_reg()
+
+# --- Resto de la columna ---
+for i in range(1, n_steps):
+    # Reconstruir T_{i-1} (secreto) a partir del CRV publico anterior
+    T_prev = T.conv(crv_prev) ^ S_prev
+
+    # Hashear mientras sigue siendo secreto
+    x = to_message_bits(T_prev)
+    x = sha256(x)
+    H_value = x.elements()[0]
+
+    # Cegar con S_i y revelar CRV_i
+    S_i = S(i)
+    crv_i = (H_value ^ S_i).reveal()
+    crv_i.print_reg()
+
+    crv_prev = crv_i
+    S_prev = S_i

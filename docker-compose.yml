@@ -1,0 +1,50 @@
+services:
+  party0:
+    build: .
+    hostname: party0
+    networks:
+      - mpc-net
+    environment:
+      - PARTY_ID=0
+      - NUM_PARTIES=3
+      - COORDINATOR_HOST=party0
+      - N_STEPS=256
+    volumes:
+      - ./data/party0:/mpspdz/Player-Data
+    tty: true
+
+  party1:
+    build: .
+    hostname: party1
+    networks:
+      - mpc-net
+    environment:
+      - PARTY_ID=1
+      - NUM_PARTIES=3
+      - COORDINATOR_HOST=party0
+      - N_STEPS=256
+    volumes:
+      - ./data/party1:/mpspdz/Player-Data
+    depends_on:
+      - party0
+    tty: true
+
+  party2:
+    build: .
+    hostname: party2
+    networks:
+      - mpc-net
+    environment:
+      - PARTY_ID=2
+      - NUM_PARTIES=3
+      - COORDINATOR_HOST=party0
+      - N_STEPS=256
+    volumes:
+      - ./data/party2:/mpspdz/Player-Data
+    depends_on:
+      - party0
+    tty: true
+
+networks:
+  mpc-net:
+    driver: bridge
