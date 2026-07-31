@@ -8,7 +8,7 @@ services:
       - PARTY_ID=0
       - NUM_PARTIES=3
       - COORDINATOR_HOST=party0
-      - N_STEPS=256
+      - N_STEPS=16
     volumes:
       - ./data/party0:/mpspdz/Player-Data
     tty: true
@@ -22,7 +22,7 @@ services:
       - PARTY_ID=1
       - NUM_PARTIES=3
       - COORDINATOR_HOST=party0
-      - N_STEPS=256
+      - N_STEPS=16
     volumes:
       - ./data/party1:/mpspdz/Player-Data
     depends_on:
@@ -38,7 +38,7 @@ services:
       - PARTY_ID=2
       - NUM_PARTIES=3
       - COORDINATOR_HOST=party0
-      - N_STEPS=256
+      - N_STEPS=16
     volumes:
       - ./data/party2:/mpspdz/Player-Data
     depends_on:
