@@ -1,3 +1,4 @@
 data/*/Input-*
 data/*/Memory-*
+data/sync/ready-*
 logs/*.log

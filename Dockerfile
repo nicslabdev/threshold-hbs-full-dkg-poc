@@ -20,6 +20,12 @@ RUN make setup
 
 RUN make -j"$(nproc)" semi-bin-party.x
 
+# Traer el submodulo de circuitos en build time: si no, compile.py lo
+# clona por red en cada contenedor al arrancar, lo que añade latencia de
+# red variable justo antes de que las parties se conecten entre si y
+# puede provocar timeouts de conexion entre ellas.
+RUN git submodule update --init Programs/Circuits || git clone --depth 1 https://github.com/mkskeller/bristol-fashion Programs/Circuits
+
 COPY programs/sha256_full_column.mpc ./Programs/Source/sha256_full_column.mpc
 COPY scripts/entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh

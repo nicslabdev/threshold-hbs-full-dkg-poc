@@ -12,6 +12,7 @@ services:
       - N_COLS=67
     volumes:
       - ./data/party0:/mpspdz/Player-Data
+      - ./data/sync:/mpspdz/sync
     tty: true
 
   party1:
@@ -27,6 +28,7 @@ services:
       - N_COLS=67
     volumes:
       - ./data/party1:/mpspdz/Player-Data
+      - ./data/sync:/mpspdz/sync
     depends_on:
       - party0
     tty: true
@@ -44,6 +46,7 @@ services:
       - N_COLS=67
     volumes:
       - ./data/party2:/mpspdz/Player-Data
+      - ./data/sync:/mpspdz/sync
     depends_on:
       - party0
     tty: true
