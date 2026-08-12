@@ -9,8 +9,10 @@ services:
       - NUM_PARTIES=3
       - COORDINATOR_HOST=party0
       - N_STEPS=16
+      - N_COLUMNS=${N_COLUMNS:-4}
     volumes:
       - ./data/party0:/mpspdz/Player-Data
+      - ./data/sync:/mpspdz/sync
     tty: true
 
   party1:
@@ -23,8 +25,10 @@ services:
       - NUM_PARTIES=3
       - COORDINATOR_HOST=party0
       - N_STEPS=16
+      - N_COLUMNS=${N_COLUMNS:-4}
     volumes:
       - ./data/party1:/mpspdz/Player-Data
+      - ./data/sync:/mpspdz/sync
     depends_on:
       - party0
     tty: true
@@ -39,8 +43,10 @@ services:
       - NUM_PARTIES=3
       - COORDINATOR_HOST=party0
       - N_STEPS=16
+      - N_COLUMNS=${N_COLUMNS:-4}
     volumes:
       - ./data/party2:/mpspdz/Player-Data
+      - ./data/sync:/mpspdz/sync
     depends_on:
       - party0
     tty: true

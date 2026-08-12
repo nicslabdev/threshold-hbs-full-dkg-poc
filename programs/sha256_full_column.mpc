@@ -1,7 +1,8 @@
 # sha256_full_column.mpc
 #
-# Saca la COLUMNA COMPLETA del CRV (n_steps valores) en una unica
-# ejecucion de MPC.
+# Saca las n_columns COLUMNAS COMPLETAS del CRV (n_steps valores cada
+# una) en una unica ejecucion de MPC. Las columnas son independientes
+# entre si y se generan SECUENCIALMENTE, una detras de otra.
 #
 # Cada trustee aporta n_steps valores secretos SK_j^i (uno por
 # posicion de la columna). Definimos S_i = XOR de los SK_j^i de todos
@@ -17,12 +18,13 @@
 # Caso base (i=0, sin hash):
 #   CRV_0 = S_0  (revelado directamente)
 #
-# Uso: ./compile.py sha256_full_column <n_steps> <n_parties>
+# Uso: ./compile.py sha256_full_column <n_steps> <n_parties> <n_columns>
 
 from circuit import sha256
 
 n_steps = int(program.args[1])
 n_parties = int(program.args[2])
+n_columns = int(program.args[3])
 n_bytes = 32  # 256 bits
 
 T = sbits.get_type(n_bytes * 8)
@@ -40,36 +42,45 @@ def to_message_bits(value):
     return sbitvec.from_vec(message_bits)
 
 
-# Cada party aporta n_steps valores secretos, uno por posicion de la columna
-shares = [[T.get_input_from(p) for _ in range(n_steps)] for p in range(n_parties)]
+# Cada party aporta n_columns * n_steps valores secretos: uno por
+# posicion de cada columna. Se leen en orden (columna, paso), que es el
+# mismo orden en que entrypoint.sh los escribe en Player-Data.
+shares = [[[T.get_input_from(p) for _ in range(n_steps)]
+           for _ in range(n_columns)]
+          for p in range(n_parties)]
 
-def S(i):
-    """XOR de los shares de los n_parties trustees en la posicion i."""
-    result = shares[0][i]
+def S(c, i):
+    """XOR de los shares de los n_parties trustees en la posicion i de
+    la columna c."""
+    result = shares[0][c][i]
     for p in range(1, n_parties):
-        result = result ^ shares[p][i]
+        result = result ^ shares[p][c][i]
     return result
 
 
-# --- Caso base: CRV_0 = S_0, revelado directamente (sin hash) ---
-S_prev = S(0)
-crv_prev = S_prev.reveal()
-crv_prev.print_reg()
+# --- Cada columna se genera de forma independiente y secuencial ---
+for c in range(n_columns):
+    print_ln("--- Columna %s ---", c)
 
-# --- Resto de la columna ---
-for i in range(1, n_steps):
-    # Reconstruir T_{i-1} (secreto) a partir del CRV publico anterior
-    T_prev = T.conv(crv_prev) ^ S_prev
+    # Caso base: CRV_0 = S_0, revelado directamente (sin hash)
+    S_prev = S(c, 0)
+    crv_prev = S_prev.reveal()
+    crv_prev.print_reg()
 
-    # Hashear mientras sigue siendo secreto
-    x = to_message_bits(T_prev)
-    x = sha256(x)
-    H_value = x.elements()[0]
+    # Resto de la columna
+    for i in range(1, n_steps):
+        # Reconstruir T_{i-1} (secreto) a partir del CRV publico anterior
+        T_prev = T.conv(crv_prev) ^ S_prev
 
-    # Cegar con S_i y revelar CRV_i
-    S_i = S(i)
-    crv_i = (H_value ^ S_i).reveal()
-    crv_i.print_reg()
+        # Hashear mientras sigue siendo secreto
+        x = to_message_bits(T_prev)
+        x = sha256(x)
+        H_value = x.elements()[0]
 
-    crv_prev = crv_i
-    S_prev = S_i
+        # Cegar con S_i y revelar CRV_i
+        S_i = S(c, i)
+        crv_i = (H_value ^ S_i).reveal()
+        crv_i.print_reg()
+
+        crv_prev = crv_i
+        S_prev = S_i
