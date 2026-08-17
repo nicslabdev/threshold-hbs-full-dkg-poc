@@ -1,0 +1,461 @@
+#1 [internal] load local bake definitions
+#1 reading from stdin 1.03kB done
+#1 DONE 0.0s
+
+#2 [party2 internal] load build definition from Dockerfile
+#2 transferring dockerfile: 1.15kB done
+#2 DONE 0.0s
+
+#3 [party1 internal] load metadata for docker.io/library/ubuntu:22.04
+#3 DONE 2.8s
+
+#4 [party0 internal] load .dockerignore
+#4 transferring context: 2B done
+#4 DONE 0.0s
+
+#5 [party0  1/10] FROM docker.io/library/ubuntu:22.04@sha256:3b06811b2afd352be909dd088a004166d665dc76d38b13eada33522a9d915c6f
+#5 resolve docker.io/library/ubuntu:22.04@sha256:3b06811b2afd352be909dd088a004166d665dc76d38b13eada33522a9d915c6f 0.0s done
+#5 DONE 0.0s
+
+#6 [party0 internal] load build context
+#6 transferring context: 149B done
+#6 DONE 0.0s
+
+#7 [party0  8/10] COPY programs/sha256_full_column.mpc ./Programs/Source/sha256_full_column.mpc
+#7 CACHED
+
+#8 [party0  4/10] RUN git clone --depth 1 https://github.com/data61/MP-SPDZ.git .
+#8 CACHED
+
+#9 [party0  5/10] RUN make setup
+#9 CACHED
+
+#10 [party0  2/10] RUN apt-get update && apt-get install -y     automake build-essential clang cmake git     libboost-dev libboost-filesystem-dev libboost-iostreams-dev libboost-thread-dev     libgmp-dev libntl-dev     libsodium-dev libssl-dev libtool     python3 python3-pip     && rm -rf /var/lib/apt/lists/*
+#10 CACHED
+
+#11 [party0  6/10] RUN make -j"$(nproc)" semi-bin-party.x
+#11 CACHED
+
+#12 [party0  7/10] RUN git submodule update --init Programs/Circuits || git clone --depth 1 https://github.com/mkskeller/bristol-fashion Programs/Circuits
+#12 CACHED
+
+#13 [party0  3/10] WORKDIR /mpspdz
+#13 CACHED
+
+#14 [party0  9/10] COPY scripts/entrypoint.sh /entrypoint.sh
+#14 CACHED
+
+#15 [party0 10/10] RUN chmod +x /entrypoint.sh
+#15 CACHED
+
+#16 [party2] exporting to image
+#16 exporting layers done
+#16 exporting manifest sha256:071148bc9cf003ec1d390fac834c7b1246ab647cfb1d9b037ddded255e2a9772 done
+#16 exporting config sha256:c45af22006bcd41964bdefe6a85aeea905e24546ce01c50f09baf439569d32ab done
+#16 exporting attestation manifest sha256:adcebb0f473dc0e6c4a204631a74ce0cff95d1cbb70fc2bc23d1429a7120632e 0.0s done
+#16 exporting manifest list sha256:a40dcf360afab02e345242caabb87eb5d603ba8396251c9cb8748f53ccb0da1e
+#16 exporting manifest list sha256:a40dcf360afab02e345242caabb87eb5d603ba8396251c9cb8748f53ccb0da1e 0.0s done
+#16 naming to docker.io/library/threshold-hbs-full-dkg-poc-party2:latest done
+#16 unpacking to docker.io/library/threshold-hbs-full-dkg-poc-party2:latest done
+#16 DONE 0.1s
+
+#17 [party1] exporting to image
+#17 exporting layers done
+#17 exporting manifest sha256:071148bc9cf003ec1d390fac834c7b1246ab647cfb1d9b037ddded255e2a9772 done
+#17 exporting config sha256:c45af22006bcd41964bdefe6a85aeea905e24546ce01c50f09baf439569d32ab done
+#17 exporting attestation manifest sha256:b0938e248c1d0580ba3742151583a14ae3f43116db4b1c039c75ef8d94139ca1 0.0s done
+#17 exporting manifest list sha256:607a238b7ba74054fb5c28e38f323a284b93f95265bcf27c7e5808b4522a8505 0.0s done
+#17 naming to docker.io/library/threshold-hbs-full-dkg-poc-party1:latest done
+#17 unpacking to docker.io/library/threshold-hbs-full-dkg-poc-party1:latest done
+#17 DONE 0.1s
+
+#18 [party0] exporting to image
+#18 exporting layers done
+#18 exporting manifest sha256:071148bc9cf003ec1d390fac834c7b1246ab647cfb1d9b037ddded255e2a9772 done
+#18 exporting config sha256:c45af22006bcd41964bdefe6a85aeea905e24546ce01c50f09baf439569d32ab done
+#18 exporting attestation manifest sha256:7453a9b98d09bb8048f8c05150150b29e28c3a3a4aaf85acf569debf863cbee8 0.0s done
+#18 exporting manifest list sha256:6f719ec0debaa8d305aec2b1cf533e7a1be067f48c7101305944b8db402e049f 0.0s done
+#18 naming to docker.io/library/threshold-hbs-full-dkg-poc-party0:latest done
+#18 unpacking to docker.io/library/threshold-hbs-full-dkg-poc-party0:latest done
+#18 DONE 0.1s
+
+#19 [party1] resolving provenance for metadata file
+#19 DONE 0.0s
+
+#20 [party0] resolving provenance for metadata file
+#20 DONE 0.0s
+
+#21 [party2] resolving provenance for metadata file
+#21 DONE 0.0s
+Attaching to party0-1, party1-1, party2-1
+party0-1  | ==================================================
+party0-1  |  Party 0 arrancando (16 columnas completas de 16 pasos, 3 parties)
+party0-1  | ==================================================
+party0-1  | -> Compilando sha256_full_column (n_steps=16, n_parties=3, n_columns=16)
+party0-1  | Default bit length for compilation: 64
+party0-1  | Default security parameter for compilation: 40
+party0-1  | Compiling file Programs/Source/sha256_full_column.mpc
+party2-1  | ==================================================
+party2-1  |  Party 2 arrancando (16 columnas completas de 16 pasos, 3 parties)
+party2-1  | ==================================================
+party2-1  | -> Compilando sha256_full_column (n_steps=16, n_parties=3, n_columns=16)
+party1-1  | ==================================================
+party1-1  |  Party 1 arrancando (16 columnas completas de 16 pasos, 3 parties)
+party1-1  | ==================================================
+party1-1  | -> Compilando sha256_full_column (n_steps=16, n_parties=3, n_columns=16)
+party2-1  | Default bit length for compilation: 64
+party2-1  | Default security parameter for compilation: 40
+party2-1  | Compiling file Programs/Source/sha256_full_column.mpc
+party1-1  | Default bit length for compilation: 64
+party1-1  | Default security parameter for compilation: 40
+party1-1  | Compiling file Programs/Source/sha256_full_column.mpc
+party0-1  | Compiled 100000 lines at Wed Aug 12 15:37:33 2026
+party2-1  | Compiled 100000 lines at Wed Aug 12 15:37:34 2026
+party1-1  | Compiled 100000 lines at Wed Aug 12 15:37:34 2026
+party0-1  | Compiled 200000 lines at Wed Aug 12 15:37:35 2026
+party2-1  | Compiled 200000 lines at Wed Aug 12 15:37:35 2026
+party1-1  | Compiled 200000 lines at Wed Aug 12 15:37:35 2026
+party0-1  | Compiled 300000 lines at Wed Aug 12 15:37:36 2026
+party2-1  | Compiled 300000 lines at Wed Aug 12 15:37:36 2026
+party1-1  | Compiled 300000 lines at Wed Aug 12 15:37:36 2026
+party0-1  | Compiled 400000 lines at Wed Aug 12 15:37:40 2026
+party2-1  | Compiled 400000 lines at Wed Aug 12 15:37:40 2026
+party1-1  | Compiled 400000 lines at Wed Aug 12 15:37:40 2026
+party0-1  | Compiled 500000 lines at Wed Aug 12 15:37:42 2026
+party2-1  | Compiled 500000 lines at Wed Aug 12 15:37:42 2026
+party1-1  | Compiled 500000 lines at Wed Aug 12 15:37:42 2026
+party0-1  | Compiled 600000 lines at Wed Aug 12 15:37:44 2026
+party2-1  | Compiled 600000 lines at Wed Aug 12 15:37:44 2026
+party1-1  | Compiled 600000 lines at Wed Aug 12 15:37:44 2026
+party0-1  | Compiled 700000 lines at Wed Aug 12 15:37:46 2026
+party2-1  | Compiled 700000 lines at Wed Aug 12 15:37:46 2026
+party1-1  | Compiled 700000 lines at Wed Aug 12 15:37:46 2026
+party0-1  | Compiled 800000 lines at Wed Aug 12 15:37:47 2026
+party2-1  | Compiled 800000 lines at Wed Aug 12 15:37:47 2026
+party1-1  | Compiled 800000 lines at Wed Aug 12 15:37:47 2026
+party0-1  | WARNING: Order of memory instructions not preserved, errors possible
+party2-1  | WARNING: Order of memory instructions not preserved, errors possible
+party1-1  | WARNING: Order of memory instructions not preserved, errors possible
+party0-1  | Writing to Programs/Schedules/sha256_full_column-16-3-16.sch
+party0-1  | Writing to Programs/Bytecode/sha256_full_column-16-3-16-0.bc
+party2-1  | Writing to Programs/Schedules/sha256_full_column-16-3-16.sch
+party2-1  | Writing to Programs/Bytecode/sha256_full_column-16-3-16-0.bc
+party1-1  | Writing to Programs/Schedules/sha256_full_column-16-3-16.sch
+party1-1  | Writing to Programs/Bytecode/sha256_full_column-16-3-16-0.bc
+party0-1  | Hash: 06fae03e84a1903630f1b70ccf7a557d750250bb292f916e1abc9653ef394b46
+party0-1  | Program requires at most:
+party0-1  |        65536 bit inputs from player 0
+party0-1  |        65536 bit inputs from player 1
+party0-1  |        65536 bit inputs from player 2
+party0-1  |         8192 bit opens
+party0-1  |      5417520 bit triples
+party0-1  |       385922 virtual machine rounds
+party1-1  | Hash: 06fae03e84a1903630f1b70ccf7a557d750250bb292f916e1abc9653ef394b46
+party1-1  | Program requires at most:
+party1-1  |        65536 bit inputs from player 0
+party1-1  |        65536 bit inputs from player 1
+party1-1  |        65536 bit inputs from player 2
+party1-1  |         8192 bit opens
+party1-1  |      5417520 bit triples
+party1-1  |       385922 virtual machine rounds
+party2-1  | Hash: 06fae03e84a1903630f1b70ccf7a557d750250bb292f916e1abc9653ef394b46
+party2-1  | Program requires at most:
+party2-1  |        65536 bit inputs from player 0
+party2-1  |        65536 bit inputs from player 1
+party2-1  |        65536 bit inputs from player 2
+party2-1  |         8192 bit opens
+party2-1  |      5417520 bit triples
+party2-1  |       385922 virtual machine rounds
+party0-1  | -> Lanzando semi-bin-party.x
+party0-1  | Using statistical security parameter 40
+party2-1  | -> Lanzando semi-bin-party.x
+party1-1  | -> Lanzando semi-bin-party.x
+party2-1  | Using statistical security parameter 40
+party1-1  | Using statistical security parameter 40
+party0-1  | --- Columna 0 ---
+party0-1  | Reg[0] = 0x00000000000000000000000000000000000000000000000000000000003c0000 #     
+party0-1  | Reg[0] = 0x66687aadf862bd776c8fc18b8e9f8e20089714856ee233b3902a591d0d632924 #     
+party0-1  | Reg[0] = 0x2b32db6c2c0a6235fb1397e8225ea85e0f0e6e8c7b126d0016ccbde0e65b151c #     
+party0-1  | Reg[0] = 0x12771355e46cd47c71ed1721fd5319b383cca3a1f9fce3aa1c8cd3bd379320d4 #     
+party0-1  | Reg[0] = 0xfe15c0d3ebe314fad720a08b839a004c2e6386f5aecc19ec74807d1920f76aef #     
+party0-1  | Reg[0] = 0x376da11fe3ab3d0eaaddb418ccb49b5426d5c2504f526f7766580f6e45a44e3e #     
+party0-1  | Reg[0] = 0x4391a5c79ffdc79883036503ca551673c09deec28df432a8d88debc7fa12c918 #     
+party0-1  | Reg[0] = 0x5d1adcb5797c2eff1ba0460af9324ac6df5b6ffb66be6df2547872c2f2a7a4c5 #     
+party0-1  | Reg[0] = 0x6a9b711ce5d3749ece29463110b6164dbb28dda28902586bf66e865e8c15c358 #     
+party0-1  | Reg[0] = 0x4e6e6acef5953a6a2087d8dd7d38a49b3ca0627d8ab339872ce56c5bd389a11b #     
+party0-1  | Reg[0] = 0xf13587bc89fe4882c7c889302511ffd738d136129b9f5be4c492cb4948953a83 #     
+party0-1  | Reg[0] = 0x7b1f7c3b93ff643023d63bbbe182a179922ad85a2aa0e03ef50170b583429329 #     
+party0-1  | Reg[0] = 0xdcb20558bd220be59a3d7f0091a128adb350093364276bcc7efd1ffebe2a1112 #     
+party0-1  | Reg[0] = 0x986044cccd0d6429072e2329bbf203700420754cb6e1ba4a946a8bd640ab4fab #     
+party0-1  | Reg[0] = 0x92db992ebb7dbc845fa3a0afdb5cd26577a552476ffcd8ff63aca3b0f0b6fa2c #     
+party0-1  | Reg[4] = 0x2167a4ac269f9e6bba82518e22248cd997ecf048134e7f38ec73ee00841fe15c #     
+party0-1  | --- Columna 1 ---
+party0-1  | Reg[0] = 0x00000000000000000000000000000000000000000000000000000000003c04e8 #     
+party0-1  | Reg[0] = 0x66687aadf862bd776c8fc18b8e9f8e20089714856ee233b3902a591d0d632dcc #     
+party0-1  | Reg[0] = 0x2b32db6c2c0a6235fb1397e8225ea85e0f0e6e8c7b126d0016ccbde0e65b11f4 #     
+party0-1  | Reg[0] = 0x12771355e46cd47c71ed1721fd5319b383cca3a1f9fce3aa1c8cd3bd3793243c #     
+party0-1  | Reg[0] = 0xfe15c0d3ebe314fad720a08b839a004c2e6386f5aecc19ec74807d1920f76e07 #     
+party0-1  | Reg[0] = 0x376da11fe3ab3d0eaaddb418ccb49b5426d5c2504f526f7766580f6e45a44ad6 #     
+party0-1  | Reg[0] = 0x4391a5c79ffdc79883036503ca551673c09deec28df432a8d88debc7fa12cdf0 #     
+party0-1  | Reg[0] = 0x5d1adcb5797c2eff1ba0460af9324ac6df5b6ffb66be6df2547872c2f2a7a02d #     
+party0-1  | Reg[0] = 0x6a9b711ce5d3749ece29463110b6164dbb28dda28902586bf66e865e8c15c7a0 #     
+party0-1  | Reg[0] = 0x4e6e6acef5953a6a2087d8dd7d38a49b3ca0627d8ab339872ce56c5bd389a5e3 #     
+party0-1  | Reg[0] = 0xf13587bc89fe4882c7c889302511ffd738d136129b9f5be4c492cb4948953e7b #     
+party0-1  | Reg[0] = 0x7b1f7c3b93ff643023d63bbbe182a179922ad85a2aa0e03ef50170b5834297d1 #     
+party0-1  | Reg[0] = 0xdcb20558bd220be59a3d7f0091a128adb350093364276bcc7efd1ffebe2a15ea #     
+party0-1  | Reg[0] = 0x986044cccd0d6429072e2329bbf203700420754cb6e1ba4a946a8bd640ab4b53 #     
+party0-1  | Reg[0] = 0x92db992ebb7dbc845fa3a0afdb5cd26577a552476ffcd8ff63aca3b0f0b6fed4 #     
+party0-1  | Reg[4] = 0x2167a4ac269f9e6bba82518e22248cd997ecf048134e7f38ec73ee00841fe5a4 #     
+party0-1  | --- Columna 2 ---
+party0-1  | Reg[0] = 0x00000000000000000000000000000000000000000000000000000000003c08d0 #     
+party0-1  | Reg[0] = 0x66687aadf862bd776c8fc18b8e9f8e20089714856ee233b3902a591d0d6321f4 #     
+party0-1  | Reg[0] = 0x2b32db6c2c0a6235fb1397e8225ea85e0f0e6e8c7b126d0016ccbde0e65b1dcc #     
+party0-1  | Reg[0] = 0x12771355e46cd47c71ed1721fd5319b383cca3a1f9fce3aa1c8cd3bd37932804 #     
+party0-1  | Reg[0] = 0xfe15c0d3ebe314fad720a08b839a004c2e6386f5aecc19ec74807d1920f7623f #     
+party0-1  | Reg[0] = 0x376da11fe3ab3d0eaaddb418ccb49b5426d5c2504f526f7766580f6e45a446ee #     
+party0-1  | Reg[0] = 0x4391a5c79ffdc79883036503ca551673c09deec28df432a8d88debc7fa12c1c8 #     
+party0-1  | Reg[0] = 0x5d1adcb5797c2eff1ba0460af9324ac6df5b6ffb66be6df2547872c2f2a7ac15 #     
+party0-1  | Reg[0] = 0x6a9b711ce5d3749ece29463110b6164dbb28dda28902586bf66e865e8c15cb88 #     
+party0-1  | Reg[0] = 0x4e6e6acef5953a6a2087d8dd7d38a49b3ca0627d8ab339872ce56c5bd389a9cb #     
+party0-1  | Reg[0] = 0xf13587bc89fe4882c7c889302511ffd738d136129b9f5be4c492cb4948953253 #     
+party0-1  | Reg[0] = 0x7b1f7c3b93ff643023d63bbbe182a179922ad85a2aa0e03ef50170b583429bf9 #     
+party0-1  | Reg[0] = 0xdcb20558bd220be59a3d7f0091a128adb350093364276bcc7efd1ffebe2a19c2 #     
+party0-1  | Reg[0] = 0x986044cccd0d6429072e2329bbf203700420754cb6e1ba4a946a8bd640ab477b #     
+party0-1  | Reg[0] = 0x92db992ebb7dbc845fa3a0afdb5cd26577a552476ffcd8ff63aca3b0f0b6f2fc #     
+party0-1  | Reg[4] = 0x2167a4ac269f9e6bba82518e22248cd997ecf048134e7f38ec73ee00841fe98c #     
+party0-1  | --- Columna 3 ---
+party0-1  | Reg[0] = 0x00000000000000000000000000000000000000000000000000000000003c0fb8 #     
+party0-1  | Reg[0] = 0x66687aadf862bd776c8fc18b8e9f8e20089714856ee233b3902a591d0d63269c #     
+party0-1  | Reg[0] = 0x2b32db6c2c0a6235fb1397e8225ea85e0f0e6e8c7b126d0016ccbde0e65b1aa4 #     
+party0-1  | Reg[0] = 0x12771355e46cd47c71ed1721fd5319b383cca3a1f9fce3aa1c8cd3bd37932f6c #     
+party0-1  | Reg[0] = 0xfe15c0d3ebe314fad720a08b839a004c2e6386f5aecc19ec74807d1920f76557 #     
+party0-1  | Reg[0] = 0x376da11fe3ab3d0eaaddb418ccb49b5426d5c2504f526f7766580f6e45a44186 #     
+party0-1  | Reg[0] = 0x4391a5c79ffdc79883036503ca551673c09deec28df432a8d88debc7fa12c6a0 #     
+party0-1  | Reg[0] = 0x5d1adcb5797c2eff1ba0460af9324ac6df5b6ffb66be6df2547872c2f2a7ab7d #     
+party0-1  | Reg[0] = 0x6a9b711ce5d3749ece29463110b6164dbb28dda28902586bf66e865e8c15cf90 #     
+party0-1  | Reg[0] = 0x4e6e6acef5953a6a2087d8dd7d38a49b3ca0627d8ab339872ce56c5bd389add3 #     
+party0-1  | Reg[0] = 0xf13587bc89fe4882c7c889302511ffd738d136129b9f5be4c492cb494895364b #     
+party0-1  | Reg[0] = 0x7b1f7c3b93ff643023d63bbbe182a179922ad85a2aa0e03ef50170b583429fe1 #     
+party0-1  | Reg[0] = 0xdcb20558bd220be59a3d7f0091a128adb350093364276bcc7efd1ffebe2a1dda #     
+party0-1  | Reg[0] = 0x986044cccd0d6429072e2329bbf203700420754cb6e1ba4a946a8bd640ab4363 #     
+party0-1  | Reg[0] = 0x92db992ebb7dbc845fa3a0afdb5cd26577a552476ffcd8ff63aca3b0f0b6f6e4 #     
+party0-1  | Reg[4] = 0x2167a4ac269f9e6bba82518e22248cd997ecf048134e7f38ec73ee00841fed94 #     
+party0-1  | --- Columna 4 ---
+party0-1  | Reg[0] = 0x00000000000000000000000000000000000000000000000000000000003c13a0 #     
+party0-1  | Reg[0] = 0x66687aadf862bd776c8fc18b8e9f8e20089714856ee233b3902a591d0d633a84 #     
+party0-1  | Reg[0] = 0x2b32db6c2c0a6235fb1397e8225ea85e0f0e6e8c7b126d0016ccbde0e65b06bc #     
+party0-1  | Reg[0] = 0x12771355e46cd47c71ed1721fd5319b383cca3a1f9fce3aa1c8cd3bd37933374 #     
+party0-1  | Reg[0] = 0xfe15c0d3ebe314fad720a08b839a004c2e6386f5aecc19ec74807d1920f7794f #     
+party0-1  | Reg[0] = 0x376da11fe3ab3d0eaaddb418ccb49b5426d5c2504f526f7766580f6e45a45d9e #     
+party0-1  | Reg[0] = 0x4391a5c79ffdc79883036503ca551673c09deec28df432a8d88debc7fa12dab8 #     
+party0-1  | Reg[0] = 0x5d1adcb5797c2eff1ba0460af9324ac6df5b6ffb66be6df2547872c2f2a7b765 #     
+party0-1  | Reg[0] = 0x6a9b711ce5d3749ece29463110b6164dbb28dda28902586bf66e865e8c15d0f8 #     
+party0-1  | Reg[0] = 0x4e6e6acef5953a6a2087d8dd7d38a49b3ca0627d8ab339872ce56c5bd389b2bb #     
+party0-1  | Reg[0] = 0xf13587bc89fe4882c7c889302511ffd738d136129b9f5be4c492cb4948952923 #     
+party0-1  | Reg[0] = 0x7b1f7c3b93ff643023d63bbbe182a179922ad85a2aa0e03ef50170b583428089 #     
+party0-1  | Reg[0] = 0xdcb20558bd220be59a3d7f0091a128adb350093364276bcc7efd1ffebe2a02b2 #     
+party0-1  | Reg[0] = 0x986044cccd0d6429072e2329bbf203700420754cb6e1ba4a946a8bd640ab5c0b #     
+party0-1  | Reg[0] = 0x92db992ebb7dbc845fa3a0afdb5cd26577a552476ffcd8ff63aca3b0f0b6e98c #     
+party0-1  | Reg[4] = 0x2167a4ac269f9e6bba82518e22248cd997ecf048134e7f38ec73ee00841ff2fc #     
+party0-1  | --- Columna 5 ---
+party0-1  | Reg[0] = 0x00000000000000000000000000000000000000000000000000000000003c1788 #     
+party0-1  | Reg[0] = 0x66687aadf862bd776c8fc18b8e9f8e20089714856ee233b3902a591d0d633eac #     
+party0-1  | Reg[0] = 0x2b32db6c2c0a6235fb1397e8225ea85e0f0e6e8c7b126d0016ccbde0e65b0294 #     
+party0-1  | Reg[0] = 0x12771355e46cd47c71ed1721fd5319b383cca3a1f9fce3aa1c8cd3bd3793375c #     
+party0-1  | Reg[0] = 0xfe15c0d3ebe314fad720a08b839a004c2e6386f5aecc19ec74807d1920f77d67 #     
+party0-1  | Reg[0] = 0x376da11fe3ab3d0eaaddb418ccb49b5426d5c2504f526f7766580f6e45a459b6 #     
+party0-1  | Reg[0] = 0x4391a5c79ffdc79883036503ca551673c09deec28df432a8d88debc7fa12de90 #     
+party0-1  | Reg[0] = 0x5d1adcb5797c2eff1ba0460af9324ac6df5b6ffb66be6df2547872c2f2a7b34d #     
+party0-1  | Reg[0] = 0x6a9b711ce5d3749ece29463110b6164dbb28dda28902586bf66e865e8c15d4c0 #     
+party0-1  | Reg[0] = 0x4e6e6acef5953a6a2087d8dd7d38a49b3ca0627d8ab339872ce56c5bd389b683 #     
+party0-1  | Reg[0] = 0xf13587bc89fe4882c7c889302511ffd738d136129b9f5be4c492cb4948952d1b #     
+party0-1  | Reg[0] = 0x7b1f7c3b93ff643023d63bbbe182a179922ad85a2aa0e03ef50170b5834284b1 #     
+party0-1  | Reg[0] = 0xdcb20558bd220be59a3d7f0091a128adb350093364276bcc7efd1ffebe2a068a #     
+party0-1  | Reg[0] = 0x986044cccd0d6429072e2329bbf203700420754cb6e1ba4a946a8bd640ab5833 #     
+party0-1  | Reg[0] = 0x92db992ebb7dbc845fa3a0afdb5cd26577a552476ffcd8ff63aca3b0f0b6edb4 #     
+party0-1  | Reg[4] = 0x2167a4ac269f9e6bba82518e22248cd997ecf048134e7f38ec73ee00841ff6c4 #     
+party0-1  | --- Columna 6 ---
+party0-1  | Reg[0] = 0x00000000000000000000000000000000000000000000000000000000003c1c70 #     
+party0-1  | Reg[0] = 0x66687aadf862bd776c8fc18b8e9f8e20089714856ee233b3902a591d0d633554 #     
+party0-1  | Reg[0] = 0x2b32db6c2c0a6235fb1397e8225ea85e0f0e6e8c7b126d0016ccbde0e65b096c #     
+party0-1  | Reg[0] = 0x12771355e46cd47c71ed1721fd5319b383cca3a1f9fce3aa1c8cd3bd37933ca4 #     
+party0-1  | Reg[0] = 0xfe15c0d3ebe314fad720a08b839a004c2e6386f5aecc19ec74807d1920f7769f #     
+party0-1  | Reg[0] = 0x376da11fe3ab3d0eaaddb418ccb49b5426d5c2504f526f7766580f6e45a4524e #     
+party0-1  | Reg[0] = 0x4391a5c79ffdc79883036503ca551673c09deec28df432a8d88debc7fa12d568 #     
+party0-1  | Reg[0] = 0x5d1adcb5797c2eff1ba0460af9324ac6df5b6ffb66be6df2547872c2f2a7b8b5 #     
+party0-1  | Reg[0] = 0x6a9b711ce5d3749ece29463110b6164dbb28dda28902586bf66e865e8c15df28 #     
+party0-1  | Reg[0] = 0x4e6e6acef5953a6a2087d8dd7d38a49b3ca0627d8ab339872ce56c5bd389bd6b #     
+party0-1  | Reg[0] = 0xf13587bc89fe4882c7c889302511ffd738d136129b9f5be4c492cb49489526f3 #     
+party0-1  | Reg[0] = 0x7b1f7c3b93ff643023d63bbbe182a179922ad85a2aa0e03ef50170b583428f59 #     
+party0-1  | Reg[0] = 0xdcb20558bd220be59a3d7f0091a128adb350093364276bcc7efd1ffebe2a0d62 #     
+party0-1  | Reg[0] = 0x986044cccd0d6429072e2329bbf203700420754cb6e1ba4a946a8bd640ab53db #     
+party0-1  | Reg[0] = 0x92db992ebb7dbc845fa3a0afdb5cd26577a552476ffcd8ff63aca3b0f0b6e65c #     
+party0-1  | Reg[4] = 0x2167a4ac269f9e6bba82518e22248cd997ecf048134e7f38ec73ee00841ffd2c #     
+party0-1  | --- Columna 7 ---
+party0-1  | Reg[0] = 0x00000000000000000000000000000000000000000000000000000000003c2058 #     
+party0-1  | Reg[0] = 0x66687aadf862bd776c8fc18b8e9f8e20089714856ee233b3902a591d0d63097c #     
+party0-1  | Reg[0] = 0x2b32db6c2c0a6235fb1397e8225ea85e0f0e6e8c7b126d0016ccbde0e65b3544 #     
+party0-1  | Reg[0] = 0x12771355e46cd47c71ed1721fd5319b383cca3a1f9fce3aa1c8cd3bd3793008c #     
+party0-1  | Reg[0] = 0xfe15c0d3ebe314fad720a08b839a004c2e6386f5aecc19ec74807d1920f74ab7 #     
+party0-1  | Reg[0] = 0x376da11fe3ab3d0eaaddb418ccb49b5426d5c2504f526f7766580f6e45a46e66 #     
+party0-1  | Reg[0] = 0x4391a5c79ffdc79883036503ca551673c09deec28df432a8d88debc7fa12e940 #     
+party0-1  | Reg[0] = 0x5d1adcb5797c2eff1ba0460af9324ac6df5b6ffb66be6df2547872c2f2a7849d #     
+party0-1  | Reg[0] = 0x6a9b711ce5d3749ece29463110b6164dbb28dda28902586bf66e865e8c15e330 #     
+party0-1  | Reg[0] = 0x4e6e6acef5953a6a2087d8dd7d38a49b3ca0627d8ab339872ce56c5bd3898173 #     
+party0-1  | Reg[0] = 0xf13587bc89fe4882c7c889302511ffd738d136129b9f5be4c492cb4948951aeb #     
+party0-1  | Reg[0] = 0x7b1f7c3b93ff643023d63bbbe182a179922ad85a2aa0e03ef50170b58342b341 #     
+party0-1  | Reg[0] = 0xdcb20558bd220be59a3d7f0091a128adb350093364276bcc7efd1ffebe2a317a #     
+party0-1  | Reg[0] = 0x986044cccd0d6429072e2329bbf203700420754cb6e1ba4a946a8bd640ab6fc3 #     
+party0-1  | Reg[0] = 0x92db992ebb7dbc845fa3a0afdb5cd26577a552476ffcd8ff63aca3b0f0b6da44 #     
+party0-1  | Reg[4] = 0x2167a4ac269f9e6bba82518e22248cd997ecf048134e7f38ec73ee00841fc134 #     
+party0-1  | --- Columna 8 ---
+party0-1  | Reg[0] = 0x00000000000000000000000000000000000000000000000000000000003c2440 #     
+party0-1  | Reg[0] = 0x66687aadf862bd776c8fc18b8e9f8e20089714856ee233b3902a591d0d630d64 #     
+party0-1  | Reg[0] = 0x2b32db6c2c0a6235fb1397e8225ea85e0f0e6e8c7b126d0016ccbde0e65b315c #     
+party0-1  | Reg[0] = 0x12771355e46cd47c71ed1721fd5319b383cca3a1f9fce3aa1c8cd3bd37930494 #     
+party0-1  | Reg[0] = 0xfe15c0d3ebe314fad720a08b839a004c2e6386f5aecc19ec74807d1920f74eaf #     
+party0-1  | Reg[0] = 0x376da11fe3ab3d0eaaddb418ccb49b5426d5c2504f526f7766580f6e45a46a7e #     
+party0-1  | Reg[0] = 0x4391a5c79ffdc79883036503ca551673c09deec28df432a8d88debc7fa12ed58 #     
+party0-1  | Reg[0] = 0x5d1adcb5797c2eff1ba0460af9324ac6df5b6ffb66be6df2547872c2f2a78085 #     
+party0-1  | Reg[0] = 0x6a9b711ce5d3749ece29463110b6164dbb28dda28902586bf66e865e8c15e718 #     
+party0-1  | Reg[0] = 0x4e6e6acef5953a6a2087d8dd7d38a49b3ca0627d8ab339872ce56c5bd389855b #     
+party0-1  | Reg[0] = 0xf13587bc89fe4882c7c889302511ffd738d136129b9f5be4c492cb4948951ec3 #     
+party0-1  | Reg[0] = 0x7b1f7c3b93ff643023d63bbbe182a179922ad85a2aa0e03ef50170b58342b769 #     
+party0-1  | Reg[0] = 0xdcb20558bd220be59a3d7f0091a128adb350093364276bcc7efd1ffebe2a3552 #     
+party0-1  | Reg[0] = 0x986044cccd0d6429072e2329bbf203700420754cb6e1ba4a946a8bd640ab6beb #     
+party0-1  | Reg[0] = 0x92db992ebb7dbc845fa3a0afdb5cd26577a552476ffcd8ff63aca3b0f0b6de6c #     
+party0-1  | Reg[4] = 0x2167a4ac269f9e6bba82518e22248cd997ecf048134e7f38ec73ee00841fc51c #     
+party0-1  | --- Columna 9 ---
+party0-1  | Reg[0] = 0x00000000000000000000000000000000000000000000000000000000003c2b28 #     
+party0-1  | Reg[0] = 0x66687aadf862bd776c8fc18b8e9f8e20089714856ee233b3902a591d0d63020c #     
+party0-1  | Reg[0] = 0x2b32db6c2c0a6235fb1397e8225ea85e0f0e6e8c7b126d0016ccbde0e65b3e34 #     
+party0-1  | Reg[0] = 0x12771355e46cd47c71ed1721fd5319b383cca3a1f9fce3aa1c8cd3bd37930bfc #     
+party0-1  | Reg[0] = 0xfe15c0d3ebe314fad720a08b839a004c2e6386f5aecc19ec74807d1920f741c7 #     
+party0-1  | Reg[0] = 0x376da11fe3ab3d0eaaddb418ccb49b5426d5c2504f526f7766580f6e45a46516 #     
+party0-1  | Reg[0] = 0x4391a5c79ffdc79883036503ca551673c09deec28df432a8d88debc7fa12e230 #     
+party0-1  | Reg[0] = 0x5d1adcb5797c2eff1ba0460af9324ac6df5b6ffb66be6df2547872c2f2a78fed #     
+party0-1  | Reg[0] = 0x6a9b711ce5d3749ece29463110b6164dbb28dda28902586bf66e865e8c15e860 #     
+party0-1  | Reg[0] = 0x4e6e6acef5953a6a2087d8dd7d38a49b3ca0627d8ab339872ce56c5bd3898a23 #     
+party0-1  | Reg[0] = 0xf13587bc89fe4882c7c889302511ffd738d136129b9f5be4c492cb49489511bb #     
+party0-1  | Reg[0] = 0x7b1f7c3b93ff643023d63bbbe182a179922ad85a2aa0e03ef50170b58342b811 #     
+party0-1  | Reg[0] = 0xdcb20558bd220be59a3d7f0091a128adb350093364276bcc7efd1ffebe2a3a2a #     
+party0-1  | Reg[0] = 0x986044cccd0d6429072e2329bbf203700420754cb6e1ba4a946a8bd640ab6493 #     
+party0-1  | Reg[0] = 0x92db992ebb7dbc845fa3a0afdb5cd26577a552476ffcd8ff63aca3b0f0b6d114 #     
+party0-1  | Reg[4] = 0x2167a4ac269f9e6bba82518e22248cd997ecf048134e7f38ec73ee00841fca64 #     
+party0-1  | --- Columna 10 ---
+party0-1  | Reg[0] = 0x00000000000000000000000000000000000000000000000000000000003c2f10 #     
+party0-1  | Reg[0] = 0x66687aadf862bd776c8fc18b8e9f8e20089714856ee233b3902a591d0d630634 #     
+party0-1  | Reg[0] = 0x2b32db6c2c0a6235fb1397e8225ea85e0f0e6e8c7b126d0016ccbde0e65b3a0c #     
+party0-1  | Reg[0] = 0x12771355e46cd47c71ed1721fd5319b383cca3a1f9fce3aa1c8cd3bd37930fc4 #     
+party0-1  | Reg[0] = 0xfe15c0d3ebe314fad720a08b839a004c2e6386f5aecc19ec74807d1920f745ff #     
+party0-1  | Reg[0] = 0x376da11fe3ab3d0eaaddb418ccb49b5426d5c2504f526f7766580f6e45a4612e #     
+party0-1  | Reg[0] = 0x4391a5c79ffdc79883036503ca551673c09deec28df432a8d88debc7fa12e608 #     
+party0-1  | Reg[0] = 0x5d1adcb5797c2eff1ba0460af9324ac6df5b6ffb66be6df2547872c2f2a78bd5 #     
+party0-1  | Reg[0] = 0x6a9b711ce5d3749ece29463110b6164dbb28dda28902586bf66e865e8c15ec48 #     
+party0-1  | Reg[0] = 0x4e6e6acef5953a6a2087d8dd7d38a49b3ca0627d8ab339872ce56c5bd3898e0b #     
+party0-1  | Reg[0] = 0xf13587bc89fe4882c7c889302511ffd738d136129b9f5be4c492cb4948951593 #     
+party0-1  | Reg[0] = 0x7b1f7c3b93ff643023d63bbbe182a179922ad85a2aa0e03ef50170b58342bc39 #     
+party0-1  | Reg[0] = 0xdcb20558bd220be59a3d7f0091a128adb350093364276bcc7efd1ffebe2a3e02 #     
+party0-1  | Reg[0] = 0x986044cccd0d6429072e2329bbf203700420754cb6e1ba4a946a8bd640ab60bb #     
+party0-1  | Reg[0] = 0x92db992ebb7dbc845fa3a0afdb5cd26577a552476ffcd8ff63aca3b0f0b6d53c #     
+party0-1  | Reg[4] = 0x2167a4ac269f9e6bba82518e22248cd997ecf048134e7f38ec73ee00841fce4c #     
+party0-1  | --- Columna 11 ---
+party0-1  | Reg[0] = 0x00000000000000000000000000000000000000000000000000000000003c33f8 #     
+party0-1  | Reg[0] = 0x66687aadf862bd776c8fc18b8e9f8e20089714856ee233b3902a591d0d631adc #     
+party0-1  | Reg[0] = 0x2b32db6c2c0a6235fb1397e8225ea85e0f0e6e8c7b126d0016ccbde0e65b26e4 #     
+party0-1  | Reg[0] = 0x12771355e46cd47c71ed1721fd5319b383cca3a1f9fce3aa1c8cd3bd3793132c #     
+party0-1  | Reg[0] = 0xfe15c0d3ebe314fad720a08b839a004c2e6386f5aecc19ec74807d1920f75917 #     
+party0-1  | Reg[0] = 0x376da11fe3ab3d0eaaddb418ccb49b5426d5c2504f526f7766580f6e45a47dc6 #     
+party0-1  | Reg[0] = 0x4391a5c79ffdc79883036503ca551673c09deec28df432a8d88debc7fa12fae0 #     
+party0-1  | Reg[0] = 0x5d1adcb5797c2eff1ba0460af9324ac6df5b6ffb66be6df2547872c2f2a7973d #     
+party0-1  | Reg[0] = 0x6a9b711ce5d3749ece29463110b6164dbb28dda28902586bf66e865e8c15f050 #     
+party0-1  | Reg[0] = 0x4e6e6acef5953a6a2087d8dd7d38a49b3ca0627d8ab339872ce56c5bd3899213 #     
+party0-1  | Reg[0] = 0xf13587bc89fe4882c7c889302511ffd738d136129b9f5be4c492cb494895098b #     
+party0-1  | Reg[0] = 0x7b1f7c3b93ff643023d63bbbe182a179922ad85a2aa0e03ef50170b58342a021 #     
+party0-1  | Reg[0] = 0xdcb20558bd220be59a3d7f0091a128adb350093364276bcc7efd1ffebe2a221a #     
+party0-1  | Reg[0] = 0x986044cccd0d6429072e2329bbf203700420754cb6e1ba4a946a8bd640ab7ca3 #     
+party0-1  | Reg[0] = 0x92db992ebb7dbc845fa3a0afdb5cd26577a552476ffcd8ff63aca3b0f0b6c924 #     
+party0-1  | Reg[4] = 0x2167a4ac269f9e6bba82518e22248cd997ecf048134e7f38ec73ee00841fd254 #     
+party0-1  | --- Columna 12 ---
+party0-1  | Reg[0] = 0x00000000000000000000000000000000000000000000000000000000003c37e0 #     
+party0-1  | Reg[0] = 0x66687aadf862bd776c8fc18b8e9f8e20089714856ee233b3902a591d0d631ec4 #     
+party0-1  | Reg[0] = 0x2b32db6c2c0a6235fb1397e8225ea85e0f0e6e8c7b126d0016ccbde0e65b22fc #     
+party0-1  | Reg[0] = 0x12771355e46cd47c71ed1721fd5319b383cca3a1f9fce3aa1c8cd3bd37931734 #     
+party0-1  | Reg[0] = 0xfe15c0d3ebe314fad720a08b839a004c2e6386f5aecc19ec74807d1920f75d0f #     
+party0-1  | Reg[0] = 0x376da11fe3ab3d0eaaddb418ccb49b5426d5c2504f526f7766580f6e45a479de #     
+party0-1  | Reg[0] = 0x4391a5c79ffdc79883036503ca551673c09deec28df432a8d88debc7fa12fef8 #     
+party0-1  | Reg[0] = 0x5d1adcb5797c2eff1ba0460af9324ac6df5b6ffb66be6df2547872c2f2a79325 #     
+party0-1  | Reg[0] = 0x6a9b711ce5d3749ece29463110b6164dbb28dda28902586bf66e865e8c15f4b8 #     
+party0-1  | Reg[0] = 0x4e6e6acef5953a6a2087d8dd7d38a49b3ca0627d8ab339872ce56c5bd38996fb #     
+party0-1  | Reg[0] = 0xf13587bc89fe4882c7c889302511ffd738d136129b9f5be4c492cb4948950d63 #     
+party0-1  | Reg[0] = 0x7b1f7c3b93ff643023d63bbbe182a179922ad85a2aa0e03ef50170b58342a4c9 #     
+party0-1  | Reg[0] = 0xdcb20558bd220be59a3d7f0091a128adb350093364276bcc7efd1ffebe2a26f2 #     
+party0-1  | Reg[0] = 0x986044cccd0d6429072e2329bbf203700420754cb6e1ba4a946a8bd640ab784b #     
+party0-1  | Reg[0] = 0x92db992ebb7dbc845fa3a0afdb5cd26577a552476ffcd8ff63aca3b0f0b6cdcc #     
+party0-1  | Reg[4] = 0x2167a4ac269f9e6bba82518e22248cd997ecf048134e7f38ec73ee00841fd6bc #     
+party0-1  | --- Columna 13 ---
+party0-1  | Reg[0] = 0x00000000000000000000000000000000000000000000000000000000003c3bc8 #     
+party0-1  | Reg[0] = 0x66687aadf862bd776c8fc18b8e9f8e20089714856ee233b3902a591d0d6312ec #     
+party0-1  | Reg[0] = 0x2b32db6c2c0a6235fb1397e8225ea85e0f0e6e8c7b126d0016ccbde0e65b2ed4 #     
+party0-1  | Reg[0] = 0x12771355e46cd47c71ed1721fd5319b383cca3a1f9fce3aa1c8cd3bd37931b1c #     
+party0-1  | Reg[0] = 0xfe15c0d3ebe314fad720a08b839a004c2e6386f5aecc19ec74807d1920f75127 #     
+party0-1  | Reg[0] = 0x376da11fe3ab3d0eaaddb418ccb49b5426d5c2504f526f7766580f6e45a475f6 #     
+party0-1  | Reg[0] = 0x4391a5c79ffdc79883036503ca551673c09deec28df432a8d88debc7fa12f2d0 #     
+party0-1  | Reg[0] = 0x5d1adcb5797c2eff1ba0460af9324ac6df5b6ffb66be6df2547872c2f2a79f0d #     
+party0-1  | Reg[0] = 0x6a9b711ce5d3749ece29463110b6164dbb28dda28902586bf66e865e8c15f880 #     
+party0-1  | Reg[0] = 0x4e6e6acef5953a6a2087d8dd7d38a49b3ca0627d8ab339872ce56c5bd3899ac3 #     
+party0-1  | Reg[0] = 0xf13587bc89fe4882c7c889302511ffd738d136129b9f5be4c492cb494895015b #     
+party0-1  | Reg[0] = 0x7b1f7c3b93ff643023d63bbbe182a179922ad85a2aa0e03ef50170b58342a8f1 #     
+party0-1  | Reg[0] = 0xdcb20558bd220be59a3d7f0091a128adb350093364276bcc7efd1ffebe2a2aca #     
+party0-1  | Reg[0] = 0x986044cccd0d6429072e2329bbf203700420754cb6e1ba4a946a8bd640ab7473 #     
+party0-1  | Reg[0] = 0x92db992ebb7dbc845fa3a0afdb5cd26577a552476ffcd8ff63aca3b0f0b6c1f4 #     
+party0-1  | Reg[4] = 0x2167a4ac269f9e6bba82518e22248cd997ecf048134e7f38ec73ee00841fda84 #     
+party0-1  | --- Columna 14 ---
+party0-1  | Reg[0] = 0x00000000000000000000000000000000000000000000000000000000003c3eb0 #     
+party0-1  | Reg[0] = 0x66687aadf862bd776c8fc18b8e9f8e20089714856ee233b3902a591d0d631794 #     
+party0-1  | Reg[0] = 0x2b32db6c2c0a6235fb1397e8225ea85e0f0e6e8c7b126d0016ccbde0e65b2bac #     
+party0-1  | Reg[0] = 0x12771355e46cd47c71ed1721fd5319b383cca3a1f9fce3aa1c8cd3bd37931e64 #     
+party0-1  | Reg[0] = 0xfe15c0d3ebe314fad720a08b839a004c2e6386f5aecc19ec74807d1920f7545f #     
+party0-1  | Reg[0] = 0x376da11fe3ab3d0eaaddb418ccb49b5426d5c2504f526f7766580f6e45a4708e #     
+party0-1  | Reg[0] = 0x4391a5c79ffdc79883036503ca551673c09deec28df432a8d88debc7fa12f7a8 #     
+party0-1  | Reg[0] = 0x5d1adcb5797c2eff1ba0460af9324ac6df5b6ffb66be6df2547872c2f2a79a75 #     
+party0-1  | Reg[0] = 0x6a9b711ce5d3749ece29463110b6164dbb28dda28902586bf66e865e8c15fde8 #     
+party0-1  | Reg[0] = 0x4e6e6acef5953a6a2087d8dd7d38a49b3ca0627d8ab339872ce56c5bd3899fab #     
+party0-1  | Reg[0] = 0xf13587bc89fe4882c7c889302511ffd738d136129b9f5be4c492cb4948950433 #     
+party0-1  | Reg[0] = 0x7b1f7c3b93ff643023d63bbbe182a179922ad85a2aa0e03ef50170b58342ad99 #     
+party0-1  | Reg[0] = 0xdcb20558bd220be59a3d7f0091a128adb350093364276bcc7efd1ffebe2a2fa2 #     
+party0-1  | Reg[0] = 0x986044cccd0d6429072e2329bbf203700420754cb6e1ba4a946a8bd640ab711b #     
+party0-1  | Reg[0] = 0x92db992ebb7dbc845fa3a0afdb5cd26577a552476ffcd8ff63aca3b0f0b6c49c #     
+party0-1  | Reg[4] = 0x2167a4ac269f9e6bba82518e22248cd997ecf048134e7f38ec73ee00841fdfec #     
+party0-1  | --- Columna 15 ---
+party0-1  | Reg[0] = 0x00000000000000000000000000000000000000000000000000000000003fc298 #     
+party0-1  | Reg[0] = 0x66687aadf862bd776c8fc18b8e9f8e20089714856ee233b3902a591d0d60ebbc #     
+party0-1  | Reg[0] = 0x2b32db6c2c0a6235fb1397e8225ea85e0f0e6e8c7b126d0016ccbde0e658d784 #     
+party0-1  | Reg[0] = 0x12771355e46cd47c71ed1721fd5319b383cca3a1f9fce3aa1c8cd3bd3790e24c #     
+party0-1  | Reg[0] = 0xfe15c0d3ebe314fad720a08b839a004c2e6386f5aecc19ec74807d1920f4a877 #     
+party0-1  | Reg[0] = 0x376da11fe3ab3d0eaaddb418ccb49b5426d5c2504f526f7766580f6e45a78ca6 #     
+party0-1  | Reg[0] = 0x4391a5c79ffdc79883036503ca551673c09deec28df432a8d88debc7fa110b80 #     
+party0-1  | Reg[0] = 0x5d1adcb5797c2eff1ba0460af9324ac6df5b6ffb66be6df2547872c2f2a4665d #     
+party0-1  | Reg[0] = 0x6a9b711ce5d3749ece29463110b6164dbb28dda28902586bf66e865e8c1601f0 #     
+party0-1  | Reg[0] = 0x4e6e6acef5953a6a2087d8dd7d38a49b3ca0627d8ab339872ce56c5bd38a63b3 #     
+party0-1  | Reg[0] = 0xf13587bc89fe4882c7c889302511ffd738d136129b9f5be4c492cb494896f82b #     
+party0-1  | Reg[0] = 0x7b1f7c3b93ff643023d63bbbe182a179922ad85a2aa0e03ef50170b583415181 #     
+party0-1  | Reg[0] = 0xdcb20558bd220be59a3d7f0091a128adb350093364276bcc7efd1ffebe29d3ba #     
+party0-1  | Reg[0] = 0x986044cccd0d6429072e2329bbf203700420754cb6e1ba4a946a8bd640a88d03 #     
+party0-1  | Reg[0] = 0x92db992ebb7dbc845fa3a0afdb5cd26577a552476ffcd8ff63aca3b0f0b53884 #     
+party0-1  | Reg[0] = 0x2167a4ac269f9e6bba82518e22248cd997ecf048134e7f38ec73ee00841c23f4 #     
+party0-1  | The following benchmarks are including preprocessing (offline phase).
+party0-1  | Time = 32.7687 seconds 
+party0-1  | Data sent = 92.5769 MB in ~1545224 rounds (party 0 only; use '-v' for more details)
+party2-1  | The following benchmarks are including preprocessing (offline phase).
+party2-1  | Time = 32.7686 seconds 
+party2-1  | Data sent = 90.9775 MB in ~773044 rounds (party 2 only; use '-v' for more details)
+party1-1  | The following benchmarks are including preprocessing (offline phase).
+party1-1  | Time = 32.7688 seconds 
+party1-1  | Data sent = 90.9775 MB in ~773213 rounds (party 1 only; use '-v' for more details)
+party1-1  | Global data sent = 274.532 MB (all parties)
+party0-1  | Global data sent = 274.532 MB (all parties)
+party2-1  | Global data sent = 274.532 MB (all parties)
+[Kparty2-1 exited with code 0
+[Kparty1-1 exited with code 0
+[Kparty0-1 exited with code 0

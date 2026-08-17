@@ -2,14 +2,15 @@
 #1 reading from stdin 1.03kB done
 #1 DONE 0.0s
 
-#2 [party2 internal] load build definition from Dockerfile
+#2 [party0 internal] load build definition from Dockerfile
+#2 transferring dockerfile:
 #2 transferring dockerfile: 1.15kB done
 #2 DONE 0.0s
 
 #3 [party2 internal] load metadata for docker.io/library/ubuntu:22.04
-#3 DONE 0.6s
+#3 DONE 2.2s
 
-#4 [party0 internal] load .dockerignore
+#4 [party1 internal] load .dockerignore
 #4 transferring context: 2B done
 #4 DONE 0.0s
 
@@ -21,71 +22,71 @@
 #6 transferring context: 149B done
 #6 DONE 0.0s
 
-#7 [party1  6/10] RUN make -j"$(nproc)" semi-bin-party.x
+#7 [party1  9/10] COPY scripts/entrypoint.sh /entrypoint.sh
 #7 CACHED
 
-#8 [party1  7/10] RUN git submodule update --init Programs/Circuits || git clone --depth 1 https://github.com/mkskeller/bristol-fashion Programs/Circuits
+#8 [party1  2/10] RUN apt-get update && apt-get install -y     automake build-essential clang cmake git     libboost-dev libboost-filesystem-dev libboost-iostreams-dev libboost-thread-dev     libgmp-dev libntl-dev     libsodium-dev libssl-dev libtool     python3 python3-pip     && rm -rf /var/lib/apt/lists/*
 #8 CACHED
 
-#9 [party1  3/10] WORKDIR /mpspdz
+#9 [party1  8/10] COPY programs/sha256_full_column.mpc ./Programs/Source/sha256_full_column.mpc
 #9 CACHED
 
 #10 [party1  4/10] RUN git clone --depth 1 https://github.com/data61/MP-SPDZ.git .
 #10 CACHED
 
-#11 [party1  9/10] COPY scripts/entrypoint.sh /entrypoint.sh
+#11 [party1  5/10] RUN make setup
 #11 CACHED
 
-#12 [party1  5/10] RUN make setup
+#12 [party1  6/10] RUN make -j"$(nproc)" semi-bin-party.x
 #12 CACHED
 
-#13 [party1  8/10] COPY programs/sha256_full_column.mpc ./Programs/Source/sha256_full_column.mpc
+#13 [party1  7/10] RUN git submodule update --init Programs/Circuits || git clone --depth 1 https://github.com/mkskeller/bristol-fashion Programs/Circuits
 #13 CACHED
 
-#14 [party1  2/10] RUN apt-get update && apt-get install -y     automake build-essential clang cmake git     libboost-dev libboost-filesystem-dev libboost-iostreams-dev libboost-thread-dev     libgmp-dev libntl-dev     libsodium-dev libssl-dev libtool     python3 python3-pip     && rm -rf /var/lib/apt/lists/*
+#14 [party1  3/10] WORKDIR /mpspdz
 #14 CACHED
 
 #15 [party1 10/10] RUN chmod +x /entrypoint.sh
 #15 CACHED
 
-#16 [party0] exporting to image
+#16 [party1] exporting to image
 #16 exporting layers done
 #16 exporting manifest sha256:071148bc9cf003ec1d390fac834c7b1246ab647cfb1d9b037ddded255e2a9772 done
 #16 exporting config sha256:c45af22006bcd41964bdefe6a85aeea905e24546ce01c50f09baf439569d32ab done
-#16 exporting attestation manifest sha256:dfeba0164e9837225d0154b0e72e81aae397e49cdec724d260d92c66dc784ef9 0.0s done
-#16 exporting manifest list sha256:7550aab1b0ecd3a216c9fd1e92b7fa727f2e8a8dcb182242cec75f86639e39b2
-#16 exporting manifest list sha256:7550aab1b0ecd3a216c9fd1e92b7fa727f2e8a8dcb182242cec75f86639e39b2 0.0s done
-#16 naming to docker.io/library/threshold-hbs-full-dkg-poc-party0:latest done
-#16 unpacking to docker.io/library/threshold-hbs-full-dkg-poc-party0:latest done
+#16 exporting attestation manifest sha256:ab2397a0c1b5fdf6cc8133b0c4d0ca33bd6456df2e54ad81917b662c3e9d98e8 0.0s done
+#16 exporting manifest list sha256:d4b012301b5a44a984eb5cce020a29eb3c5484020fee3d2c82c7d8089a889d1d
+#16 exporting manifest list sha256:d4b012301b5a44a984eb5cce020a29eb3c5484020fee3d2c82c7d8089a889d1d 0.0s done
+#16 naming to docker.io/library/threshold-hbs-full-dkg-poc-party1:latest done
+#16 unpacking to docker.io/library/threshold-hbs-full-dkg-poc-party1:latest done
 #16 DONE 0.1s
 
-#17 [party2] exporting to image
+#17 [party0] exporting to image
 #17 exporting layers done
 #17 exporting manifest sha256:071148bc9cf003ec1d390fac834c7b1246ab647cfb1d9b037ddded255e2a9772 done
 #17 exporting config sha256:c45af22006bcd41964bdefe6a85aeea905e24546ce01c50f09baf439569d32ab done
-#17 exporting attestation manifest sha256:26cb748621b2b59648ce3cbc09f509e12203d4f6fb90d0937347d3ebf2523c19 0.0s done
-#17 exporting manifest list sha256:76f773df63e21e22990c78656a8b948aa13f5272fe1d5977b6fc28d31f95f173 0.0s done
-#17 naming to docker.io/library/threshold-hbs-full-dkg-poc-party2:latest done
-#17 unpacking to docker.io/library/threshold-hbs-full-dkg-poc-party2:latest done
+#17 exporting attestation manifest sha256:5e5c44b3b0629f717f0acba2dd968b6f3bbb2c16cf40ef61db446d5895de3edf 0.0s done
+#17 exporting manifest list sha256:545645d99d6d244cafb4138eb00732a67258293343bc8b0a180d5ff522ca1ff4 0.0s done
+#17 naming to docker.io/library/threshold-hbs-full-dkg-poc-party0:latest done
+#17 unpacking to docker.io/library/threshold-hbs-full-dkg-poc-party0:latest done
 #17 DONE 0.1s
 
-#18 [party1] exporting to image
+#18 [party2] exporting to image
 #18 exporting layers done
 #18 exporting manifest sha256:071148bc9cf003ec1d390fac834c7b1246ab647cfb1d9b037ddded255e2a9772 done
 #18 exporting config sha256:c45af22006bcd41964bdefe6a85aeea905e24546ce01c50f09baf439569d32ab done
-#18 exporting attestation manifest sha256:dc576b0b68a9dd70eb11f99808847f12af6b274cf1fe9146616119ad3b3bbf83 0.0s done
-#18 exporting manifest list sha256:1092b9fa1bf8b8a440cca56bc93aeb801abe26840264281daa45ed8025909459 0.0s done
-#18 naming to docker.io/library/threshold-hbs-full-dkg-poc-party1:latest done
-#18 unpacking to docker.io/library/threshold-hbs-full-dkg-poc-party1:latest done
+#18 exporting attestation manifest sha256:29a6ddd735bb4574985d90b60c7153d452f9ccb0c413b041b404a100701095d8 0.0s done
+#18 exporting manifest list sha256:2753169f11815786d153a55827bd9656aa15e120fd5b3329d440a3cfb0232f2d 0.0s done
+#18 naming to docker.io/library/threshold-hbs-full-dkg-poc-party2:latest done
+#18 unpacking to docker.io/library/threshold-hbs-full-dkg-poc-party2:latest done
 #18 DONE 0.1s
 
-#19 [party2] resolving provenance for metadata file
+#19 [party0] resolving provenance for metadata file
 #19 DONE 0.0s
 
-#20 [party0] resolving provenance for metadata file
+#20 [party1] resolving provenance for metadata file
 #20 DONE 0.0s
 
-#21 [party1] resolving provenance for metadata file
+#21 [party2] resolving provenance for metadata file
 #21 DONE 0.0s
 Attaching to party0-1, party1-1, party2-1
 party0-1  | ==================================================
@@ -95,61 +96,53 @@ party0-1  | -> Compilando sha256_full_column (n_steps=16, n_parties=3, n_columns
 party0-1  | Default bit length for compilation: 64
 party0-1  | Default security parameter for compilation: 40
 party0-1  | Compiling file Programs/Source/sha256_full_column.mpc
-party2-1  | ==================================================
-party2-1  |  Party 2 arrancando (16 columnas completas de 16 pasos, 3 parties)
-party2-1  | ==================================================
-party2-1  | -> Compilando sha256_full_column (n_steps=16, n_parties=3, n_columns=16)
 party1-1  | ==================================================
 party1-1  |  Party 1 arrancando (16 columnas completas de 16 pasos, 3 parties)
 party1-1  | ==================================================
 party1-1  | -> Compilando sha256_full_column (n_steps=16, n_parties=3, n_columns=16)
-party2-1  | Default bit length for compilation: 64
-party2-1  | Default security parameter for compilation: 40
-party2-1  | Compiling file Programs/Source/sha256_full_column.mpc
+party2-1  | ==================================================
+party2-1  |  Party 2 arrancando (16 columnas completas de 16 pasos, 3 parties)
+party2-1  | ==================================================
+party2-1  | -> Compilando sha256_full_column (n_steps=16, n_parties=3, n_columns=16)
 party1-1  | Default bit length for compilation: 64
 party1-1  | Default security parameter for compilation: 40
 party1-1  | Compiling file Programs/Source/sha256_full_column.mpc
-party0-1  | Compiled 100000 lines at Wed Aug 12 14:49:42 2026
-party2-1  | Compiled 100000 lines at Wed Aug 12 14:49:42 2026
-party1-1  | Compiled 100000 lines at Wed Aug 12 14:49:42 2026
-party0-1  | Compiled 200000 lines at Wed Aug 12 14:49:43 2026
-party2-1  | Compiled 200000 lines at Wed Aug 12 14:49:43 2026
-party1-1  | Compiled 200000 lines at Wed Aug 12 14:49:43 2026
-party0-1  | Compiled 300000 lines at Wed Aug 12 14:49:44 2026
-party1-1  | Compiled 300000 lines at Wed Aug 12 14:49:44 2026
-party2-1  | Compiled 300000 lines at Wed Aug 12 14:49:44 2026
-party0-1  | Compiled 400000 lines at Wed Aug 12 14:49:45 2026
-party1-1  | Compiled 400000 lines at Wed Aug 12 14:49:45 2026
-party2-1  | Compiled 400000 lines at Wed Aug 12 14:49:45 2026
-party0-1  | Compiled 500000 lines at Wed Aug 12 14:49:46 2026
-party1-1  | Compiled 500000 lines at Wed Aug 12 14:49:46 2026
-party2-1  | Compiled 500000 lines at Wed Aug 12 14:49:46 2026
-party0-1  | Compiled 600000 lines at Wed Aug 12 14:49:48 2026
-party1-1  | Compiled 600000 lines at Wed Aug 12 14:49:48 2026
-party2-1  | Compiled 600000 lines at Wed Aug 12 14:49:48 2026
-party0-1  | Compiled 700000 lines at Wed Aug 12 14:49:50 2026
-party1-1  | Compiled 700000 lines at Wed Aug 12 14:49:50 2026
-party2-1  | Compiled 700000 lines at Wed Aug 12 14:49:50 2026
-party0-1  | Compiled 800000 lines at Wed Aug 12 14:49:51 2026
-party1-1  | Compiled 800000 lines at Wed Aug 12 14:49:52 2026
-party2-1  | Compiled 800000 lines at Wed Aug 12 14:49:52 2026
+party2-1  | Default bit length for compilation: 64
+party2-1  | Default security parameter for compilation: 40
+party2-1  | Compiling file Programs/Source/sha256_full_column.mpc
+party0-1  | Compiled 100000 lines at Wed Aug 12 15:39:08 2026
+party2-1  | Compiled 100000 lines at Wed Aug 12 15:39:08 2026
+party1-1  | Compiled 100000 lines at Wed Aug 12 15:39:08 2026
+party0-1  | Compiled 200000 lines at Wed Aug 12 15:39:10 2026
+party2-1  | Compiled 200000 lines at Wed Aug 12 15:39:10 2026
+party1-1  | Compiled 200000 lines at Wed Aug 12 15:39:10 2026
+party0-1  | Compiled 300000 lines at Wed Aug 12 15:39:12 2026
+party2-1  | Compiled 300000 lines at Wed Aug 12 15:39:12 2026
+party1-1  | Compiled 300000 lines at Wed Aug 12 15:39:12 2026
+party0-1  | Compiled 400000 lines at Wed Aug 12 15:39:14 2026
+party2-1  | Compiled 400000 lines at Wed Aug 12 15:39:14 2026
+party1-1  | Compiled 400000 lines at Wed Aug 12 15:39:14 2026
+party0-1  | Compiled 500000 lines at Wed Aug 12 15:39:18 2026
+party2-1  | Compiled 500000 lines at Wed Aug 12 15:39:18 2026
+party1-1  | Compiled 500000 lines at Wed Aug 12 15:39:18 2026
+party0-1  | Compiled 600000 lines at Wed Aug 12 15:39:20 2026
+party2-1  | Compiled 600000 lines at Wed Aug 12 15:39:20 2026
+party1-1  | Compiled 600000 lines at Wed Aug 12 15:39:20 2026
+party0-1  | Compiled 700000 lines at Wed Aug 12 15:39:22 2026
+party2-1  | Compiled 700000 lines at Wed Aug 12 15:39:22 2026
+party1-1  | Compiled 700000 lines at Wed Aug 12 15:39:22 2026
+party0-1  | Compiled 800000 lines at Wed Aug 12 15:39:24 2026
+party2-1  | Compiled 800000 lines at Wed Aug 12 15:39:24 2026
+party1-1  | Compiled 800000 lines at Wed Aug 12 15:39:24 2026
 party0-1  | WARNING: Order of memory instructions not preserved, errors possible
 party2-1  | WARNING: Order of memory instructions not preserved, errors possible
 party1-1  | WARNING: Order of memory instructions not preserved, errors possible
-party0-1  | Writing to Programs/Schedules/sha256_full_column-16-3-16.sch
-party0-1  | Writing to Programs/Bytecode/sha256_full_column-16-3-16-0.bc
 party2-1  | Writing to Programs/Schedules/sha256_full_column-16-3-16.sch
 party2-1  | Writing to Programs/Bytecode/sha256_full_column-16-3-16-0.bc
+party0-1  | Writing to Programs/Schedules/sha256_full_column-16-3-16.sch
+party0-1  | Writing to Programs/Bytecode/sha256_full_column-16-3-16-0.bc
 party1-1  | Writing to Programs/Schedules/sha256_full_column-16-3-16.sch
 party1-1  | Writing to Programs/Bytecode/sha256_full_column-16-3-16-0.bc
-party0-1  | Hash: 06fae03e84a1903630f1b70ccf7a557d750250bb292f916e1abc9653ef394b46
-party0-1  | Program requires at most:
-party0-1  |        65536 bit inputs from player 0
-party0-1  |        65536 bit inputs from player 1
-party0-1  |        65536 bit inputs from player 2
-party0-1  |         8192 bit opens
-party0-1  |      5417520 bit triples
-party0-1  |       385922 virtual machine rounds
 party2-1  | Hash: 06fae03e84a1903630f1b70ccf7a557d750250bb292f916e1abc9653ef394b46
 party2-1  | Program requires at most:
 party2-1  |        65536 bit inputs from player 0
@@ -158,6 +151,14 @@ party2-1  |        65536 bit inputs from player 2
 party2-1  |         8192 bit opens
 party2-1  |      5417520 bit triples
 party2-1  |       385922 virtual machine rounds
+party0-1  | Hash: 06fae03e84a1903630f1b70ccf7a557d750250bb292f916e1abc9653ef394b46
+party0-1  | Program requires at most:
+party0-1  |        65536 bit inputs from player 0
+party0-1  |        65536 bit inputs from player 1
+party0-1  |        65536 bit inputs from player 2
+party0-1  |         8192 bit opens
+party0-1  |      5417520 bit triples
+party0-1  |       385922 virtual machine rounds
 party1-1  | Hash: 06fae03e84a1903630f1b70ccf7a557d750250bb292f916e1abc9653ef394b46
 party1-1  | Program requires at most:
 party1-1  |        65536 bit inputs from player 0
@@ -166,10 +167,10 @@ party1-1  |        65536 bit inputs from player 2
 party1-1  |         8192 bit opens
 party1-1  |      5417520 bit triples
 party1-1  |       385922 virtual machine rounds
-party0-1  | -> Lanzando semi-bin-party.x
-party0-1  | Using statistical security parameter 40
 party2-1  | -> Lanzando semi-bin-party.x
 party2-1  | Using statistical security parameter 40
+party0-1  | -> Lanzando semi-bin-party.x
+party0-1  | Using statistical security parameter 40
 party1-1  | -> Lanzando semi-bin-party.x
 party1-1  | Using statistical security parameter 40
 party0-1  | --- Columna 0 ---
@@ -445,17 +446,17 @@ party0-1  | Reg[0] = 0x986044cccd0d6429072e2329bbf203700420754cb6e1ba4a946a8bd64
 party0-1  | Reg[0] = 0x92db992ebb7dbc845fa3a0afdb5cd26577a552476ffcd8ff63aca3b0f0b53884 #     
 party0-1  | Reg[0] = 0x2167a4ac269f9e6bba82518e22248cd997ecf048134e7f38ec73ee00841c23f4 #     
 party1-1  | The following benchmarks are including preprocessing (offline phase).
-party2-1  | The following benchmarks are including preprocessing (offline phase).
 party0-1  | The following benchmarks are including preprocessing (offline phase).
-party1-1  | Time = 32.5768 seconds 
-party2-1  | Time = 32.5767 seconds 
-party0-1  | Time = 32.5771 seconds 
+party1-1  | Time = 32.9579 seconds 
 party1-1  | Data sent = 90.9775 MB in ~773213 rounds (party 1 only; use '-v' for more details)
-party2-1  | Data sent = 90.9775 MB in ~773044 rounds (party 2 only; use '-v' for more details)
+party1-1  | Global data sent = 274.532 MB (all parties)
+party0-1  | Time = 32.958 seconds 
 party0-1  | Data sent = 92.5769 MB in ~1545224 rounds (party 0 only; use '-v' for more details)
 party0-1  | Global data sent = 274.532 MB (all parties)
-party1-1  | Global data sent = 274.532 MB (all parties)
+party2-1  | The following benchmarks are including preprocessing (offline phase).
+party2-1  | Time = 32.9577 seconds 
+party2-1  | Data sent = 90.9775 MB in ~773044 rounds (party 2 only; use '-v' for more details)
 party2-1  | Global data sent = 274.532 MB (all parties)
-[Kparty2-1 exited with code 0
 [Kparty0-1 exited with code 0
 [Kparty1-1 exited with code 0
+[Kparty2-1 exited with code 0
