@@ -20,10 +20,10 @@ RUN make setup
 
 RUN make -j"$(nproc)" semi-bin-party.x
 
-# Traer el submodulo de circuitos en build time: si no, compile.py lo
-# clona por red en cada contenedor al arrancar, lo que añade latencia de
-# red variable justo antes de que las parties se conecten entre si y
-# puede provocar timeouts de conexion entre ellas.
+# Fetch the circuits submodule at build time: otherwise compile.py
+# clones it over the network in every container at startup, which adds
+# variable network latency right before the parties connect to each
+# other and can cause connection timeouts between them.
 RUN git submodule update --init Programs/Circuits || git clone --depth 1 https://github.com/mkskeller/bristol-fashion Programs/Circuits
 
 COPY programs/sha256_full_column.mpc ./Programs/Source/sha256_full_column.mpc

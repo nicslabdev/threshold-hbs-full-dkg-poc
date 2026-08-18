@@ -1,4 +1,9 @@
 ---
+This guide describes the `simd` execution mode of `sha256_full_column.mpc`
+(`MODE=simd` in `docker-compose.yml` / `entrypoint.sh`). See the main
+[`README.md`](README.md) for the `sequential` mode and how to select
+between the two.
+
 0. The mental model first (what "SIMD" means here)
 
 Forget MPC for a second. Think of the SHA-256 circuit as a physical machine made of wires and logic gates (AND, XOR, NOT). Normally each wire carries one bit. To hash one 256-bit message you feed 256 bits in, the gates fire, and 256 output bits come out.

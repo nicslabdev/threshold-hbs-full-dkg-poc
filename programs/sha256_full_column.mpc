@@ -1,49 +1,57 @@
 # sha256_full_column.mpc
 #
-# Saca la MATRIZ COMPLETA del CRV (n_cols columnas x n_steps valores) en
-# una unica ejecucion de MPC.
+# Produces the FULL CRV MATRIX (n_cols columns x n_steps values) in a
+# single MPC run, with two selectable execution modes:
 #
-# Cada columna es una cadena de hash WOTS-like independiente (derivada de
-# su propia semilla), por lo que las columnas son el eje natural para
-# paralelizar con SIMD: la cadena sigue siendo SECUENCIAL dentro de una
-# columna (n_steps pasos), pero en cada paso hasheamos TODAS las columnas
-# a la vez con una unica llamada vectorizada a sha256().
+#   - "sequential": the n_cols columns are generated one after another,
+#     each with its own sequence of n_steps MPC steps. With n_cols=1
+#     it reproduces the behavior of a single column.
+#   - "simd": the n_cols columns are processed at once, packed as SIMD
+#     lanes inside a single vectorized call to sha256() per step. The
+#     chain is still SEQUENTIAL within a column (n_steps steps), but
+#     each step hashes ALL columns at once.
 #
-# En MP-SPDZ el numero de instancias paralelas del circuito es el ancho de
-# registro de los sbits que alimentan al circuito: apilando n_cols valores
-# de 256 bits con sbitvec([...]) obtenemos exactamente esa forma bit-sliced
-# (cada .v[j] pasa a ser un registro de ancho n_cols).
+# In both modes, each column is an independent WOTS-like hash chain
+# (derived from its own seed). In "simd" mode, the number of parallel
+# circuit instances is the register width of the sbits fed into the
+# circuit: stacking n_cols 256-bit values with sbitvec([...]) yields
+# that bit-sliced shape (each .v[j] becomes a register of width n_cols).
 #
-# Cada trustee aporta n_cols*n_steps valores secretos SK_j^{c,i} (uno por
-# posicion de cada columna). Definimos S_{c,i} = XOR de los SK_j^{c,i} de
-# todos los trustees en la columna c, posicion i.
+# Each trustee contributes n_cols*n_steps secret values SK_j^{c,i} (one
+# per position of each column). We define S_{c,i} = XOR of the SK_j^{c,i}
+# of all trustees in column c, position i.
 #
-# Formula (para i >= 1), verificada algebraicamente, aplicada por columna:
+# Formula (for i >= 1), verified algebraically, applied per column:
 #   CRV_{c,i} = H(CRV_{c,i-1} XOR S_{c,i-1}) XOR S_{c,i}
-# porque CRV_{c,i-1} XOR S_{c,i-1} reconstruye T_{c,i-1} (el valor real que
-# tendria el "virtual-dealer"), sin revelarlo en ningun momento
-# pues se hashea mientras sigue siendo secreto y se vuelve a cegar con
-# S_{c,i} antes de revelar CRV_{c,i}.
+# because CRV_{c,i-1} XOR S_{c,i-1} reconstructs T_{c,i-1} (the actual
+# value the "virtual dealer" would have), without ever revealing it,
+# since it is hashed while still secret and re-blinded with S_{c,i}
+# before revealing CRV_{c,i}.
 #
-# Caso base (i=0, sin hash):
-#   CRV_{c,0} = S_{c,0}  (revelado directamente)
+# Base case (i=0, no hash):
+#   CRV_{c,0} = S_{c,0}  (revealed directly)
 #
-# Uso: ./compile.py sha256_full_column <n_steps> <n_parties> [<n_cols>]
-#   n_cols por defecto = 1 (reproduce el comportamiento de una sola columna)
+# Usage: ./compile.py sha256_full_column <n_steps> <n_parties> [<n_cols> [<mode>]]
+#   n_cols defaults to 1
+#   mode   defaults to "sequential" (alternative: "simd")
 
 from circuit import sha256
 
 n_steps = int(program.args[1])
 n_parties = int(program.args[2])
 n_cols = int(program.args[3]) if len(program.args) > 3 else 1
+mode = program.args[4] if len(program.args) > 4 else "sequential"
 n_bytes = 32  # 256 bits
+
+if mode not in ("sequential", "simd"):
+    raise ValueError("mode debe ser 'sequential' o 'simd', recibido: %r" % mode)
 
 T = sbits.get_type(n_bytes * 8)
 
 def to_message_bits(value):
-    """Convierte un valor de 256 bits en los 'bits de mensaje' que
-    espera sha256() como entrada (regla confirmada empiricamente en
-    un experimento anterior)."""
+    """Converts a 256-bit value into the 'message bits' that sha256()
+    expects as input (rule confirmed empirically in a previous
+    experiment)."""
     all_bits = value.bit_decompose(n_bytes * 8)
     message_bits = []
     for i in range(n_bytes):
@@ -54,50 +62,81 @@ def to_message_bits(value):
 
 
 def to_message_bits_batched(values):
-    """Apila los mensajes de las n_cols columnas en carriles SIMD.
-    'values' es una lista de n_cols valores sbits(256); el sbitvec
-    resultante tiene cada .v[j] como un registro de ancho n_cols, que es
-    justo lo que sha256() interpreta como n_cols instancias en paralelo."""
+    """Stacks the messages of the n_cols columns into SIMD lanes.
+    'values' is a list of n_cols sbits(256) values; the resulting
+    sbitvec has each .v[j] as a register of width n_cols, which is
+    exactly what sha256() interprets as n_cols parallel instances.
+    Only used in "simd" mode."""
     return sbitvec([to_message_bits(v) for v in values])
 
 
-# Cada party aporta n_cols*n_steps valores secretos, uno por posicion de
-# cada columna, en orden columna-mayor (columna 0 completa, luego columna
-# 1, ...). El orden debe coincidir con el de scripts/entrypoint.sh porque
-# get_input_from consume el fichero Input-P<p>-0 secuencialmente.
+# Each party contributes n_cols*n_steps secret values, one per position
+# of each column, in column-major order (column 0 in full, then column
+# 1, ...). The order must match scripts/entrypoint.sh because
+# get_input_from consumes the Input-P<p>-0 file sequentially. The input
+# order is the same for both modes.
 shares = [[[T.get_input_from(p) for _ in range(n_steps)]
            for _ in range(n_cols)] for p in range(n_parties)]
 
 def S(c, i):
-    """XOR de los shares de los n_parties trustees en la columna c,
-    posicion i."""
+    """XOR of the shares of the n_parties trustees in column c,
+    position i."""
     result = shares[0][c][i]
     for p in range(1, n_parties):
         result = result ^ shares[p][c][i]
     return result
 
 
-# --- Caso base: CRV_{c,0} = S_{c,0}, revelado directamente (sin hash) ---
-# Se revelan las n_cols columnas de golpe (un unico open) y se imprimen.
-S_prev = [S(c, 0) for c in range(n_cols)]
-crv_prev = sbitvec(S_prev).reveal()  # lista de n_cols valores publicos
-for cv in crv_prev:
-    cv.print_reg()
+if mode == "sequential":
+    # --- Each column is generated independently and sequentially ---
+    for c in range(n_cols):
+        print_ln("--- Columna %s ---", c)
 
-# --- Resto de la matriz: paso secuencial, columnas en SIMD ---
-for i in range(1, n_steps):
-    # Reconstruir T_{c,i-1} (secreto) a partir del CRV publico anterior.
-    # Operaciones locales (conv/XOR): no consumen rondas de comunicacion.
-    T_prev = [T.conv(crv_prev[c]) ^ S_prev[c] for c in range(n_cols)]
+        # Base case: CRV_{c,0} = S_{c,0}, revealed directly (no hash)
+        S_prev = S(c, 0)
+        crv_prev = S_prev.reveal()
+        crv_prev.print_reg()
 
-    # UNA sola llamada SIMD a sha256() hashea las n_cols columnas a la vez.
-    H = sha256(to_message_bits_batched(T_prev)).elements()
+        # Rest of the column
+        for i in range(1, n_steps):
+            # Reconstruct T_{c,i-1} (secret) from the previous public CRV
+            T_prev = T.conv(crv_prev) ^ S_prev
 
-    # Cegar con S_{c,i} y revelar las n_cols columnas en un unico open.
-    S_i = [S(c, i) for c in range(n_cols)]
-    crv_i = sbitvec([H[c] ^ S_i[c] for c in range(n_cols)]).reveal()
-    for cv in crv_i:
+            # Hash while it is still secret
+            x = to_message_bits(T_prev)
+            x = sha256(x)
+            H_value = x.elements()[0]
+
+            # Blind with S_{c,i} and reveal CRV_{c,i}
+            S_i = S(c, i)
+            crv_i = (H_value ^ S_i).reveal()
+            crv_i.print_reg()
+
+            crv_prev = crv_i
+            S_prev = S_i
+
+else:  # mode == "simd"
+    # --- Base case: CRV_{c,0} = S_{c,0}, revealed directly (no hash) ---
+    # The n_cols columns are revealed at once (a single open) and printed.
+    S_prev = [S(c, 0) for c in range(n_cols)]
+    crv_prev = sbitvec(S_prev).reveal()  # list of n_cols public values
+    for cv in crv_prev:
         cv.print_reg()
 
-    crv_prev = crv_i
-    S_prev = S_i
+    # --- Rest of the matrix: sequential steps, columns in SIMD ---
+    for i in range(1, n_steps):
+        # Reconstruct T_{c,i-1} (secret) from the previous public CRV.
+        # Local operations (conv/XOR): they consume no communication rounds.
+        T_prev = [T.conv(crv_prev[c]) ^ S_prev[c] for c in range(n_cols)]
+
+        # A SINGLE SIMD call to sha256() hashes the n_cols columns at once.
+        H = sha256(to_message_bits_batched(T_prev)).elements()
+
+        # Blind with S_{c,i} and reveal the n_cols columns in a single open.
+        S_i = [S(c, i) for c in range(n_cols)]
+        crv_i = sbitvec([H[c] ^ S_i[c] for c in range(n_cols)]).reveal()
+        for cv in crv_i:
+            cv.print_reg()
+
+        crv_prev = crv_i
+        S_prev = S_i

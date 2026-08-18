@@ -9,7 +9,8 @@ services:
       - NUM_PARTIES=3
       - COORDINATOR_HOST=party0
       - N_STEPS=16
-      - N_COLS=4
+      - MODE=${MODE:-sequential}
+      - N_COLS=${N_COLS:-4}
     volumes:
       - ./data/party0:/mpspdz/Player-Data
       - ./data/sync:/mpspdz/sync
@@ -25,7 +26,8 @@ services:
       - NUM_PARTIES=3
       - COORDINATOR_HOST=party0
       - N_STEPS=16
-      - N_COLS=4
+      - MODE=${MODE:-sequential}
+      - N_COLS=${N_COLS:-4}
     volumes:
       - ./data/party1:/mpspdz/Player-Data
       - ./data/sync:/mpspdz/sync
@@ -43,7 +45,8 @@ services:
       - NUM_PARTIES=3
       - COORDINATOR_HOST=party0
       - N_STEPS=16
-      - N_COLS=4
+      - MODE=${MODE:-sequential}
+      - N_COLS=${N_COLS:-4}
     volumes:
       - ./data/party2:/mpspdz/Player-Data
       - ./data/sync:/mpspdz/sync

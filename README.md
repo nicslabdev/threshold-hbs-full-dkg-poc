@@ -1,4 +1,4 @@
-# sha256-full-matrix-test
+# sha256-full-dkg-poc
 
 Proof of concept for the **full DKG** construction described in our
 threshold hash-based signatures work: obtaining an entire CRV matrix
@@ -7,15 +7,25 @@ positions) via MPC, with **no dealer involved at all** — the trustees
 alone generate the matrix and the real chain value at each position is
 never revealed to anyone, not even transiently to a single party.
 
-Because the columns are mutually independent, they are batched into
-MP-SPDZ **SIMD lanes**: the hash chain stays *sequential* within a column
-(`N_STEPS` steps), but every step hashes **all `N_COLS` columns at once**
-with a single vectorized `sha256()` call. The number of parallel circuit
-instances is the register width of the `sbits` fed to the circuit, so the
-SHA-256 bytecode is emitted once per step (not once per column): the whole
-matrix costs ≈ the round count / wall-clock of a single column, while the
-data volume grows ~`N_COLS`×. Setting `N_COLS=1` reproduces the original
-single-column behaviour.
+The matrix can be computed in two ways, selected with the `MODE`
+parameter:
+
+- **`sequential`**: the `N_COLS` columns are computed one after another,
+  each as its own independent MPC sequence of `N_STEPS` steps. With
+  `N_COLS=1` this reproduces the original single-column construction.
+- **`simd`**: because the columns are mutually independent, they are
+  batched into MP-SPDZ **SIMD lanes**. The hash chain stays *sequential*
+  within a column (`N_STEPS` steps), but every step hashes **all
+  `N_COLS` columns at once** with a single vectorized `sha256()` call.
+  The number of parallel circuit instances is the register width of the
+  `sbits` fed to the circuit, so the SHA-256 bytecode is emitted once per
+  step (not once per column): the whole matrix costs ≈ the round count /
+  wall-clock of a single column, while the data volume grows ~`N_COLS`×.
+  See [`SIMD-GUIDE.md`](SIMD-GUIDE.md) for a line-by-line walkthrough.
+
+Both modes compute exactly the same matrix; they only differ in how the
+computation is batched (and, in the MPC output, in the order the columns
+are printed — see below).
 
 ## The formula
 
@@ -35,24 +45,71 @@ where `SK_j^i` is the secret share held by trustee `j` at position
 docker compose up --build
 ```
 
-`N_STEPS` (default 16), `N_COLS` (default 67, the SHA-256 WOTS+ `len`)
-and `NUM_PARTIES` (default 3) are configured in `docker-compose.yml`.
+By default this runs `MODE=sequential` with `N_COLS=4`. Both `MODE`
+(`sequential` or `simd`) and `N_COLS` are input parameters of the run,
+passed through the environment:
+
+```
+MODE=simd N_COLS=67 docker compose up --build
+```
+
+or via a `.env` file next to `docker-compose.yml`:
+
+```
+MODE=simd
+N_COLS=67
+```
+
+`N_STEPS` (default 16) and `NUM_PARTIES` (default 3) are still fixed in
+`docker-compose.yml`.
+
+Every party must agree on `MODE` and `N_COLS`, so always set them for
+the whole `docker compose` invocation rather than per service, and tear
+down (`docker compose down`) between runs with different values — the
+`Player-Data` inputs under `data/` are sized for the previous run.
+
+Note that the circuit is fully unrolled at compile time, so compilation
+cost grows with `N_STEPS * N_COLS` (roughly linearly in `sequential`
+mode; the `simd` mode emits the SHA-256 bytecode only once per step, so
+it scales far better with `N_COLS`), and every party compiles its own
+identical copy at the same time. Raising `N_COLS` too far will OOM-kill
+one of the containers during the compile step. To guard against
+containers finishing compilation at very different times (which could
+otherwise make `semi-bin-party.x` time out waiting to connect),
+`entrypoint.sh` has every party write a `ready-<party_id>` marker under
+`data/sync/` and wait for all of them before launching.
 
 ## What to expect
 
 Only `party0` prints locally (MP-SPDZ default behaviour in
-non-interactive runs — the other parties still contribute their
-shares to the MPC round, they just don't reveal the result to
-themselves). You should see `N_STEPS × N_COLS` lines `Reg[0] = 0x...`
-printed in **step-major** order — for each step `i`, the `N_COLS`
-columns `CRV_i,0 … CRV_i,N_COLS-1`. At the end, MP-SPDZ reports the
-total cost (time, data sent) for the whole run.
+non-interactive runs — the other parties still contribute their shares
+to the MPC round, they just don't reveal the result to themselves). You
+should see `N_STEPS × N_COLS` lines `Reg[0] = 0x...`, in an order that
+depends on `MODE`:
+
+- `sequential`: `N_COLS` blocks headed `--- Columna c ---`, each with
+  `N_STEPS` lines printed in sequence — one full column, revealed one
+  position at a time, before moving to the next column.
+- `simd`: **step-major** order — for each step `i`, the `N_COLS` columns
+  `CRV_i,0 … CRV_i,N_COLS-1`, all revealed together in a single open.
+
+At the end, MP-SPDZ reports the total cost (time, data sent) for the
+whole run.
 
 ## Verifying correctness
 
 `verify_full_column.py` recomputes the same matrix independently in
 plain Python (no MPC), using the same deterministic test inputs
-generated by `entrypoint.sh` and the same step-major output order, so
-you can check the MPC output against a trusted reference line by line.
-Keep its `n_steps`, `n_cols` and `n_parties` constants in sync with
-`docker-compose.yml`.
+generated by `entrypoint.sh`, so you can check the MPC output against a
+trusted reference line by line. It takes the same parameters, matching
+the order (`sequential` or step-major `simd`) that the MPC run printed
+in:
+
+```
+python3 verify_full_column.py simd 67          # mode n_cols
+python3 verify_full_column.py simd 67 16 3     # mode n_cols n_steps n_parties
+```
+
+It also reads `MODE`, `N_COLS`, `N_STEPS` and `NUM_PARTIES` from the
+environment, so the same `.env` (or exported variables) used for the run
+applies to the verification too.
